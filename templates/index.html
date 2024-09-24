@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Search</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #eeeeee;
+        }
+        .banner {
+            background-image: url('/static/1.jpeg');
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            position: relative;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Overlay */
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black overlay */
+            z-index: 1; /* Ensure it covers the background but not the text */
+        }
+        .banner-content {
+            position: relative;
+            z-index: 2; /* Ensure the text and logo appear above the overlay */
+        }
+        .logo {
+            height: 100%; /* Scale the logo to the height of the banner */
+            max-height: 200px;
+            width: auto;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-wrapper {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .form-logo {
+            max-width: 150px; /* Increase the size of the second logo */
+            height: auto;
+            margin-bottom: 10px; /* Add space between logo and heading */
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .banner {
+                height: 200px;
+            }
+            .logo {
+                max-width: 100px;
+            }
+        }
+    </style>
+    <script>
+        function validateEmiratesID() {
+            const emiratesIDInput = document.getElementById("emirates_id");
+            const pattern = /^\d{15}$/;  // Exactly 15 digits
+            
+            if (!pattern.test(emiratesIDInput.value)) {
+                alert("Please enter a valid Emirates ID. It should be exactly 15 digits.");
+                emiratesIDInput.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function formatEmiratesID(input) {
+            // Remove any non-digit characters
+            let value = input.value.replace(/\D/g, '');
+            
+            // Limit to 15 digits
+            value = value.slice(0, 15);
+            
+            // Update the input value
+            input.value = value;
+        }
+
+        window.onload = function() {
+            // Set the current year as the default value for the year input
+            document.getElementById("year").value = new Date().getFullYear();
+        }
+    </script>
+</head>
+<body>
+    <div class="banner">
+        
+    </div>
+    <div class="container">
+        <div class="form-wrapper">
+            <!-- Second logo above the "Report Card Search" text -->
+            <img src="/static/2.png" alt="Small Logo" class="form-logo">
+            <form action="/search" method="post" onsubmit="return validateEmiratesID();">
+                <div class="form-group">
+                    <label for="class_name">Class:</label>
+                    <input type="text" name="class_name" id="class_name" placeholder="Enter Class" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="month">Month:</label>
+                    <select name="month" id="month" required>
+                        <option value="">Select Month</option>
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="year">Year:</label>
+                    <input type="number" name="year" id="year" placeholder="Enter Year" min="1900" max="2099" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="emirates_id">Emirates ID:</label>
+                    <input type="text" name="emirates_id" id="emirates_id" placeholder="Enter Emirates ID (e.g., 784123456789012)" maxlength="15" required onkeyup="formatEmiratesID(this)">
+                    <small>Format: Exactly 15 digits, numbers only</small>
+                </div>
+                
+                <div class="form-group">
+                    <input type="submit" value="Search">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
