@@ -15,7 +15,7 @@ firebase_admin.initialize_app(
     cred, {'storageBucket': 'reportcardapp-fe480.appspot.com'})
 
 
-def list_pdf_files(class_name=None, month=None, year=None):
+def list_pdf_files(month=None, year=None):
     bucket = storage.bucket()
     blobs = bucket.list_blobs()
 
@@ -24,16 +24,14 @@ def list_pdf_files(class_name=None, month=None, year=None):
     for blob in blobs:
         file_name = blob.name
 
-        # Assume files are named like 'class_month_year.pdf'
+        # Assume files are named like 'month_year.pdf'
         if file_name.endswith('.pdf'):
             parts = file_name.split('_')
 
-            if len(parts) == 3:
-                file_class, file_month, file_year = parts[0], parts[1], parts[
-                    2].replace('.pdf', '')
+            if len(parts) == 2:
+                file_month, file_year = parts[0], parts[1].replace('.pdf', '')
 
-                if (class_name == file_class or class_name is None) and \
-                   (month == file_month or month is None) and \
+                if (month == file_month or month is None) and \
                    (year == file_year or year is None):
                     files.append(file_name)
 
@@ -47,7 +45,6 @@ def index():
 
 @app.route('/search', methods=['POST'])
 def search():
-    class_name = request.form.get('class_name')
     month = request.form.get('month')
     year = request.form.get('year')
 
@@ -58,13 +55,13 @@ def search():
     if len(emirates_id) != 15:
         return "Invalid Emirates ID. It should be exactly 15 digits."
 
-    # List and filter PDF files based on class, month, and year
-    files = list_pdf_files(class_name=class_name, month=month, year=year)
+    # List and filter PDF files based on month and year
+    files = list_pdf_files(month=month, year=year)
 
     if not files:
-        return "No files found for the selected class, month, and year"
+        return "No files found for the selected month and year"
 
-    # Assuming there's only one matching file for class, month, year
+    # Assuming there's only one matching file for the month and year
     file_name = files[0]
 
     bucket = storage.bucket()
@@ -108,4 +105,3 @@ def search():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
